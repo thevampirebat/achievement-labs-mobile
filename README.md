@@ -1,3 +1,5 @@
+> **Unofficial contribution fork** of [Achievement Labs Mobile](https://github.com/Achievement-Labs/achievement-labs-mobile). Fork app releases and downloads remain at [thevampirebat/achievement-labs](https://github.com/thevampirebat/achievement-labs/releases). Event JSON comes from [Achievement Labs Desktop](https://github.com/Achievement-Labs/achievement-labs). This repository is used to contribute mobile fixes upstream.
+
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Achievement Labs Mobile — Achievement tools. Wherever you play." width="100%">
 </p>
