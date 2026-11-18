@@ -10,7 +10,7 @@ public class CoreTests {
   JSONObject asset=new JSONObject().put("name","AchievementLabs-Android-0.3.0.apk").put("browser_download_url",download).put("size",100).put("digest","sha256:"+"a".repeat(64));
   JSONObject release=new JSONObject().put("html_url",page).put("assets",new JSONArray().put(asset));
   assertEquals("0.3.0",Updater.choose(new JSONArray().put(release)).getString("version"));
-  asset.put("browser_download_url",download.replace("thevampirebat/achievement-labs","thevampirebat/achievement-labs"));assertNull(Updater.choose(new JSONArray().put(release)));
+  asset.put("browser_download_url",download.replace("thevampirebat/achievement-labs","Achievement-Labs/achievement-labs-mobile"));assertNull(Updater.choose(new JSONArray().put(release)));
   asset.put("browser_download_url","https://example.com/other.apk");assertNull(Updater.choose(new JSONArray().put(release)));
   asset.put("browser_download_url",download).put("name","AchievementLabs-Windows.exe");assertNull(Updater.choose(new JSONArray().put(release)));
   asset.put("name","AchievementLabs-Android-0.3.0.apk");release.put("draft",true);assertNull(Updater.choose(new JSONArray().put(release)));
