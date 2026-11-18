@@ -3,6 +3,14 @@ android {
  namespace 'org.achievementlabs.mobile'
  compileSdk 35
  defaultConfig { applicationId 'org.achievementlabs.mobile'; minSdk 26; targetSdk 35; versionCode 26; versionName '0.7.0'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
+ def sideBySidePreview = providers.gradleProperty('labsSideBySidePreview').orNull == 'true'
+ defaultConfig.manifestPlaceholders = [labsAppLabel: 'Achievement Labs']
+ if (sideBySidePreview) {
+  buildTypes.debug {
+   applicationIdSuffix '.preview'
+   manifestPlaceholders = [labsAppLabel: 'Achievement Labs Preview']
+  }
+ }
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
  buildFeatures { buildConfig true }
  testOptions { unitTests.all { testLogging { events "passed", "failed", "skipped"; exceptionFormat "full" } } }

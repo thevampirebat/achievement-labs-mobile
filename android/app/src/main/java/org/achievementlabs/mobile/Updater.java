@@ -17,6 +17,9 @@ final class Updater {
   }return best;
  }
  static JSONObject check(SessionEngine e)throws Exception{
+  if (BuildConfig.APPLICATION_ID.endsWith(".preview")) {
+   return new JSONObject().put("message", "Install a newer preview APK manually to update this copy.").put("canInstall", false);
+  }
   JSONArray releases=new JSONArray(Net.read(RELEASES_API,"GET",null,null,null,null,4*1024*1024));
   candidate=choose(releases);boolean newer=candidate!=null&&Core.newer(candidate.getString("version"),BuildConfig.VERSION_NAME);
   e.notice=candidate==null?"No published Android release yet; Windows and iOS releases ignored.":newer?"Android "+candidate.getString("version")+" is available.":"Android app is up to date.";

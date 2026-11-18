@@ -223,7 +223,7 @@ try{preview=BuildConfig.DEBUG&&previewMode;previewPage=startPage;vault=new Vault
    case "spoofStop":stopSpoof();return publicState(true);
    case "prefs":prefs=p;if(!foreground&&!prefs.optBoolean("backgroundSessions",true)){pause();stopSpoof();}save();return publicState(true);
    case "notifications":requestNotifications();return new JSONObject();
-   case "events":{JSONObject feed=new JSONObject(Net.read(EVENT_FEED,"GET",null,null,null,null,32*1024*1024));JSONObject before=catalogue.synced;try{int n=catalogue.merge(feed);save();notice="Event sync complete: "+n+" new titles. Existing mappings retained.";}catch(Exception e){catalogue.synced=before;throw e;}return publicState(true);}
+   case "events":{JSONObject feed=new JSONObject(Net.read(EVENT_FEED,"GET",null,null,null,null,32*1024*1024));JSONObject before=catalogue.synced;try{int n=catalogue.merge(feed);save();notice="Official mobile event feed "+feed.optString("upstreamRelease","unknown release")+": "+n+" new titles added. Existing mappings retained.";}catch(Exception e){catalogue.synced=before;throw e;}return publicState(true);}
    case "scanCompletion":{for(int i=0;i<games.length();i++){JSONObject g=games.getJSONObject(i);JSONArray r=rows(g,auth().getString("xuid"));completion(g,r);notice="Scanned "+(i+1)+" / "+games.length();push();if(!foreground)break;}return publicState(true);}
    case "updates":return Updater.check(this);
    case "installUpdate":return Updater.download(this);

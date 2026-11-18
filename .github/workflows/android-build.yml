@@ -36,7 +36,7 @@ jobs:
         run: |
           node --check android/app/src/main/assets/app.js
           node android/ui-checks.cjs
-          gradle -p android testDebugUnitTest assembleDebug lintDebug --stacktrace
+          gradle -p android -PlabsSideBySidePreview=true testDebugUnitTest assembleDebug lintDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: AchievementLabs-Android-Green-Badges-Preview
