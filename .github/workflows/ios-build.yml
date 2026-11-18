@@ -1,5 +1,9 @@
 name: iOS standalone beta
-on: workflow_dispatch
+on:
+  pull_request:
+    branches: [main]
+    paths: [android/**, mobile/**, catalog-source/**, catalog/**, assets/**, .github/workflows/**]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -35,6 +39,9 @@ jobs:
         run: |
           python3 mobile/tools/test_edition_catalogue.py
           python3 mobile/tools/prepare_catalogue.py
+          python3 mobile/tools/prepare_360.py
+          node mobile/Shared360/core-checks.cjs
+          node mobile/Shared360/ui-checks.cjs
       - name: Run synthetic core and generated catalogue checks
         env:
           LABS_CATALOGUE: ${{ github.workspace }}/mobile/Catalogue
@@ -61,13 +68,19 @@ jobs:
           xcodebuild -project mobile/AchievementLabsMobile.xcodeproj -scheme AchievementLabsMobile -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath mobile/build CODE_SIGNING_ALLOWED=NO build
           /usr/libexec/PlistBuddy -c 'Print :BGTaskSchedulerPermittedIdentifiers' mobile/build/Build/Products/Release-iphoneos/AchievementLabsMobile.app/Info.plist
           /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' mobile/build/Build/Products/Release-iphoneos/AchievementLabsMobile.app/Info.plist
+      - name: Build for simulator
+        timeout-minutes: 6
+        run: |
+          xcodebuild -project mobile/AchievementLabsMobile.xcodeproj -scheme AchievementLabsMobile -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath mobile/simulator CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_ENTITLEMENTS="$PWD/mobile/Simulator.entitlements" build
+          codesign --verify --deep --strict mobile/simulator/Build/Products/Debug-iphonesimulator/AchievementLabsMobile.app
+          codesign -d --entitlements :- mobile/simulator/Build/Products/Debug-iphonesimulator/AchievementLabsMobile.app
       - name: Package unsigned IPA for user signing
         run: |
           mkdir -p mobile/artifacts/Payload
           cp -R mobile/build/Build/Products/Release-iphoneos/AchievementLabsMobile.app mobile/artifacts/Payload/
           cd mobile/artifacts
-          /usr/bin/zip -qry AchievementLabs-iOS-0.13.0-UNSIGNED.ipa Payload
-          shasum -a 256 AchievementLabs-iOS-0.13.0-UNSIGNED.ipa > SHA256.txt
+          /usr/bin/zip -qry AchievementLabs-iOS-0.13.1-UNSIGNED.ipa Payload
+          shasum -a 256 AchievementLabs-iOS-0.13.1-UNSIGNED.ipa > SHA256.txt
           cp ../Catalogue/catalogue-report.json .
           cp ../README.md .
           cp ../WIDGETS.md .
@@ -76,7 +89,17 @@ jobs:
           rm -rf Payload
       - uses: actions/upload-artifact@v4
         with:
-          name: AchievementLabs-iOS-Green-Badges-Preview
+          name: AchievementLabs-iOS-Standalone-Unsigned
           path: mobile/artifacts/
           retention-days: 30
           if-no-files-found: error
+      - name: Verify iOS 26 simulator screens and safe background request
+        timeout-minutes: 12
+        run: python3 -u mobile/tools/simulator_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: AchievementLabs-iOS-Simulator-Checks
+          path: mobile/artifacts/iPhone-*.png
+          retention-days: 7
+          if-no-files-found: ignore

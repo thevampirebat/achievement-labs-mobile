@@ -1,3 +1,7 @@
+# Achievement Labs mobile — unofficial fork
+
+Fork app downloads and updates use https://github.com/thevampirebat/achievement-labs/releases. Main project https://github.com/Achievement-Labs/achievement-labs-mobile. Event data stays with Achievement Labs.
+
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Achievement Labs Mobile â€” Achievement tools. Wherever you play." width="100%">
 </p>
